@@ -30,7 +30,8 @@ The firs map-reduce filering raw records with type = 'A' and makeup the output a
   * Output: filtered record with only type = 'A' in the format of `vin_number (type, year, make)`
 
 ## Testing:
-Test mapper 1 and reducer1:
+* Test mapper1 and reducer1:
+
 `$ cat data.csv | autoinc_mapper1.py | sort | autoinc_reducer1.py`
 
 The output should be in the format of key value with key is vin number and value is tuple of (type, make, year).
@@ -38,15 +39,41 @@ The output should show group of data by key i.e., vin number.
 ```
 EXOA00341AB123456       ('A', 'Mercedes', '2016')
 INU45KIOOPA343980       ('A', 'Mercedes', '2015')
-INU45KIOOPA343980       ('A', 'Mercedes', '2015')
-UXIA769ABCC447906       ('A', 'Toyota', '2017')
-UXIA769ABCC447906       ('A', 'Toyota', '2017')
-VOME254OOXW344325       ('A', 'Mercedes', '2015')
-VOME254OOXW344325       ('A', 'Mercedes', '2015')
 VOME254OOXW344325       ('A', 'Mercedes', '2015')
 VXIO456XLBB630221       ('A', 'Nissan', '2003')
-VXIO456XLBB630221       ('A', 'Nissan', '2003')
-VXIO456XLBB630221       ('A', 'Nissan', '2003')
-VXIO456XLBB630221       ('A', 'Nissan', '2003')
+```
+* Test mapper1, reducer1, mapper2, and reducer2
 
+`cat data.csv | autoinc_mapper1.py | sort | autoinc_reducer1.py | autoinc_mapper2.py | sort | autoinc_reducer2.py`
+
+The output should be
+```
+Mercedes2015    2
+Mercedes2016    1
+Nissan2003      1
+```
+
+## Running
+Suppose you've already installed and started haddop successfully.
+
+* Step 1: copy csv file into hdfs
+```
+hdfs dfs -put data.csv input
+```
+Step 2: Run the map-reduce
+
+Run the first map-reduce
+```
+hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*streaming*.jar \
+-file autoinc_mapper1.py -mapper autoinc_mapper1.py \
+-file autoinc_reducer1.py -reducer autoinc_reducer1.py \
+-input input/data.csv -output output/all_accidents
+```
+
+Then run the second map-reduce. Note that the input of the second map-reduce is the output of the first map-reduce.
+```
+hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*streaming*.jar \
+-file autoinc_mapper2.py -mapper autoinc_mapper2.py \
+-file autoinc_reducer2.py -reducer autoinc_reducer2.py \
+-input output/all_accidents -output output/make_year_count
 ```
