@@ -18,6 +18,17 @@ year | STRING (The year of the car, only populated with incident type “I”)
 Incident_date | DATE (Date of the incident occurrence)
 description | STRING
 
+## Map - Reduce design:
+The project use two map-reduce pairs. 
+### Filtering
+The firs map-reduce filering raw records with type = 'A' and makeup the output as (key, value) pair with key is the vin number and value is a tuple of (type, make, year).
+* Mapper 1:
+  * Input: raw data, get from stdin.
+  * Output: the makeup record in the format of `vin_number (type, year, make)`.
+* Reducer 1:
+  * Input: output of Mapper 1, get from stdin.
+  * Output: filtered record with only type = 'A' in the format of `vin_number (type, year, make)`
+
 ## Testing:
 Test mapper 1 and reducer1:
 `$ cat data.csv | autoinc_mapper1.py | sort | autoinc_reducer1.py`
