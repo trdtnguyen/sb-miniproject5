@@ -43,7 +43,7 @@ for line in sys.stdin:
     #convert string to tuple
     value = eval(str_vals[1])
 
-    # Update lookup dicktionary
+    # Update lookup dictionary
     type_val = value[0]
     if type_val == 'I':
         # add (key, value) to dictionary
