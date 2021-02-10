@@ -42,6 +42,17 @@ INU45KIOOPA343980       ('A', 'Mercedes', '2015')
 VOME254OOXW344325       ('A', 'Mercedes', '2015')
 VXIO456XLBB630221       ('A', 'Nissan', '2003')
 ```
+* Test mapper1, reducer1, mapper2, and reducer2
+
+`cat data.csv | autoinc_mapper1.py | sort | autoinc_reducer1.py | autoinc_mapper2.py | sort | autoinc_reducer2.py`
+
+The output should be
+```
+Mercedes2015    2
+Mercedes2016    1
+Nissan2003      1
+```
+
 * Explain:
 The original CSV file is:
 ```
@@ -112,15 +123,27 @@ VOME254OOXW344325       ('A', 'Mercedes', '2015')
 VXIO456XLBB630221       ('A', 'Nissan', '2003')
 ```
 
-* Test mapper1, reducer1, mapper2, and reducer2
+This is the input for mapper2. Mapper2 reformat the input to create new k-v pair, key is the combine of Make and Year, and put `1` at the end of each record as the started count value. The result after executed Mapper2 is:
 
-`cat data.csv | autoinc_mapper1.py | sort | autoinc_reducer1.py | autoinc_mapper2.py | sort | autoinc_reducer2.py`
-
-The output should be
 ```
-Mercedes2015    2
-Mercedes2016    1
-Nissan2003      1
+Mercedes2016	1
+Mercedes2015	1
+Mercedes2015	1
+Nissan2003	1
+```
+We also use Unix's sort to simulate `Shuffer and Sort` phase in MapReduce framework. The result after sorted is:
+```
+Mercedes2015	1
+Mercedes2015	1
+Mercedes2016	1
+Nissan2003	1
+```
+This becomes the input for Reducer2. The main role of Reducer2 is counting number of records group by key. The final result is:
+
+```
+Mercedes2015	2
+Mercedes2016	1
+Nissan2003	1
 ```
 
 ## Running
