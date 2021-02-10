@@ -115,13 +115,14 @@ VXIO456XLBB630221	('I', 'Nissan', '2003')
 VXIO456XLBB630221	('R', '', '')
 VXIO456XLBB630221	('R', '', '')
 ```
-Note that the records are sorted by key value. This is the input for reducer 1. After reducer1 executed, the result is:
+Note that the records are sorted by key value. This is the input for reducer 1. The role of the reducer1 is extract `make` and `year` of a car (in 'I' type) which has an accident (type 'A') using the vim as the key. After reducer1 executed, the result is:
 ```
 EXOA00341AB123456       ('A', 'Mercedes', '2016')
 INU45KIOOPA343980       ('A', 'Mercedes', '2015')
 VOME254OOXW344325       ('A', 'Mercedes', '2015')
 VXIO456XLBB630221       ('A', 'Nissan', '2003')
 ```
+We could see that, reducer1 reduces the number of records (that why it's named reducer).
 
 This is the input for mapper2. Mapper2 reformat the input to create new k-v pair, key is the combine of Make and Year, and put `1` at the end of each record as the started count value. The result after executed Mapper2 is:
 
